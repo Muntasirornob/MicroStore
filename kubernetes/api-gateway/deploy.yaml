@@ -1,0 +1,61 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: microstore-api-gateway
+  labels:
+    app.kubernetes.io/instance: microstore
+    app.kubernetes.io/component: api-gateway
+    app.kubernetes.io/name: microstore-api-gateway
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/part-of: microstore
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: microstore-api-gateway
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: microstore
+        app.kubernetes.io/component: api-gateway
+        app.kubernetes.io/name: microstore-api-gateway
+    spec:
+      containers:
+        - name: api-gateway
+          image: 'microstore/api-gateway:latest'
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              name: http
+          env:
+            - name: PORT
+              value: "8080"
+            - name: PRODUCT_SERVICE_URL
+              value: 'http://microstore-product-service:5001'
+            - name: ORDER_SERVICE_URL
+              value: 'http://microstore-order-service:5002'
+            - name: USER_SERVICE_URL
+              value: 'http://microstore-user-service:8000'
+            - name: ALLOWED_ORIGINS
+              value: 'http://microstore-frontend'
+          resources:
+            limits:
+              memory: 256Mi
+              cpu: 300m
+            requests:
+              memory: 128Mi
+              cpu: 100m
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5

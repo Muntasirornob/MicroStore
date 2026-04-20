@@ -9,5 +9,5 @@ FROM node:20-alpine
 WORKDIR /usr/src/app
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY . .
-EXPOSE 3002
+EXPOSE 5002
 ENTRYPOINT ["node", "index.js"]

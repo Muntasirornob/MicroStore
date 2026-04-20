@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: microstore-product-service
+  labels:
+    app.kubernetes.io/instance: microstore
+    app.kubernetes.io/component: product-service
+    app.kubernetes.io/name: microstore-product-service
+    app.kubernetes.io/version: "1.0.0"
+    app.kubernetes.io/part-of: microstore
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5001
+      name: http
+      targetPort: 5001
+  selector:
+    app.kubernetes.io/name: microstore-product-service
